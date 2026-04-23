@@ -4,6 +4,8 @@ Thumbs.db
 
 # --- Environment variables (SENSITIVE) ---
 .env
+.env.*
+!.env.example
 *.key
 credentials.json
 
@@ -20,6 +22,7 @@ build/
 out/
 *.exe
 *.log
+server/uploads/
 
 # --- Editor/IDE specific ---
 .vscode/
