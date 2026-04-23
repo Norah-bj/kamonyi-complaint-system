@@ -119,31 +119,25 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Card 2: Glassmorphism Inspired (Image 3) */}
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="relative min-h-[320px] rounded-[2.5rem] overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-kamonyiBlue -z-10" />
+          {/* Card 2: Smart Routing (Solid Blue, No Hover) */}
+          <div className="relative min-h-[320px] rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-indigo-600 to-kamonyiBlue p-8 flex flex-col justify-between shadow-2xl shadow-blue-900/20">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-white/10 rounded-full blur-3xl animate-pulse" />
             
-            <div className="h-full bg-white/10 backdrop-blur-md border border-white/20 p-8 flex flex-col justify-between">
-              <div className="relative">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-6 backdrop-blur-xl border border-white/30 animate-float">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-outfit font-black text-white mb-2">Smart Routing</h3>
-                <p className="text-blue-50/70 text-xs font-medium leading-relaxed">
-                  Automated case distribution ensuring the right department handles your case instantly.
-                </p>
+            <div className="relative z-10">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-6 backdrop-blur-xl border border-white/30 animate-float">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              
-              <div className="flex items-center space-x-3 text-white">
-                <div className="text-sm font-black uppercase tracking-widest underline decoration-2 underline-offset-8">Learn More</div>
-                <MousePointer2 className="w-4 h-4" />
-              </div>
+              <h3 className="text-xl font-outfit font-black text-white mb-2">Smart Routing</h3>
+              <p className="text-blue-50/70 text-xs font-medium leading-relaxed">
+                Automated case distribution ensuring the right department handles your case instantly.
+              </p>
             </div>
-          </motion.div>
+            
+            <div className="relative z-10 flex items-center space-x-3 text-white">
+              <div className="text-sm font-black uppercase tracking-widest underline decoration-2 underline-offset-8">Learn More</div>
+              <MousePointer2 className="w-4 h-4" />
+            </div>
+          </div>
 
           {/* Card 3: Neumorphic/Clean Inspired (Image 2) */}
           <motion.div 
