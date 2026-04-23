@@ -1,7 +1,22 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiUploadCloud, FiCheckCircle, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  UploadCloud, 
+  CheckCircle, 
+  ChevronRight, 
+  ChevronLeft, 
+  User, 
+  MapPin, 
+  FileText, 
+  History, 
+  Paperclip,
+  Send,
+  AlertCircle,
+  FileCheck2,
+  Sparkles
+} from 'lucide-react';
 
 const SECTORS = ['Gacurabwenge', 'Karama', 'Kayenzi', 'Ngamba', 'Nyamiyaga', 'Nyarubaka', 'Rugalika', 'Rukoma', 'Runda'];
 
@@ -56,209 +71,251 @@ export default function SubmitComplaint() {
       
       setSuccessId(res.data.trackingId);
     } catch (err) {
-      console.error(err);
       alert('Error submitting complaint. Please try again.');
     }
     setLoading(false);
   };
 
+  const stepIcons = [
+    <User className="w-4 h-4" />,
+    <MapPin className="w-4 h-4" />,
+    <FileText className="w-4 h-4" />,
+    <History className="w-4 h-4" />,
+    <Paperclip className="w-4 h-4" />
+  ];
+
   if (successId) {
     return (
-      <div className="max-w-2xl mx-auto mt-20 p-8 card-shadow text-center">
-        <FiCheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-        <h2 className="text-3xl font-bold text-slate-800 mb-4">Complaint Submitted!</h2>
-        <p className="text-lg text-slate-600 mb-6">Your tracking ID is below. Keep it safe to track your complaint status.</p>
-        <div className="bg-kamonyiLightBlue p-4 rounded-xl inline-block mb-8">
-          <span className="text-2xl font-mono font-bold text-kamonyiBlue">{successId}</span>
-        </div>
-        <button onClick={() => navigate('/track')} className="btn-primary w-full">Track Status Now</button>
+      <div className="min-h-screen pt-32 pb-20 px-6 bg-slate-50 flex items-center justify-center relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-50 rounded-full blur-[120px] -mr-64 -mt-64" />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          className="card-pinned max-w-md w-full !p-10 text-center"
+        >
+          <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <FileCheck2 className="w-8 h-8 text-green-500" />
+          </div>
+          <h2 className="text-2xl font-outfit font-black text-slate-900 mb-2 tracking-tight">Case Recorded</h2>
+          <p className="text-xs text-slate-500 mb-8 leading-relaxed font-medium">
+            Your formal complaint has been securely transmitted to the District administration.
+          </p>
+          
+          <div className="bg-slate-50 border-2 border-dashed border-slate-200 p-6 rounded-2xl mb-8 group transition-all hover:bg-white hover:border-kamonyiBlue hover:shadow-lg">
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Tracking Reference</div>
+            <div className="text-3xl font-outfit font-black text-kamonyiBlue tracking-wider">{successId}</div>
+          </div>
+
+          <button 
+            onClick={() => navigate('/track')} 
+            className="w-full bg-kamonyiBlue text-white py-4 rounded-xl font-black text-xs shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center space-x-2"
+          >
+            <span>Track Status</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-4 sm:p-8 mb-20 bg-white card-shadow rounded-3xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-kamonyiBlue mb-2">Submit Complaint</h1>
-        <p className="text-slate-500 mb-6">Step {step} of 5</p>
-        
-        {/* Progress Bar */}
-        <div className="w-full bg-gray-100 rounded-full h-2.5 mb-8">
-          <div className="bg-kamonyiBlue h-2.5 rounded-full transition-all duration-300" style={{ width: `${(step / 5) * 100}%` }}></div>
+    <div className="min-h-screen pt-32 pb-20 px-6 bg-slate-50/50 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-30 -z-10" />
+      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-blue-100/50 rounded-full blur-[100px] -z-10" />
+
+      <div className="max-w-3xl mx-auto relative z-10">
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center space-x-2 bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm mb-4">
+            <Sparkles className="w-3 h-3 text-kamonyiBlue" />
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Formal Submission Portal</span>
+          </div>
+          <motion.h1 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-outfit font-black text-slate-900 mb-2 tracking-tight"
+          >
+            Submit Complaint
+          </motion.h1>
         </div>
-      </div>
 
-      <div className="space-y-6 min-h-[300px]">
-        {/* STEP 1: Personal Info */}
-        {step === 1 && (
-          <div className="animate-fade-in">
-            <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                <input type="text" className="input-field" value={formData.citizen.name} onChange={e => updateCitizen('name', e.target.value)} placeholder="Amazina yombi" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
-                  <select className="input-field" value={formData.citizen.gender} onChange={e => updateCitizen('gender', e.target.value)}>
-                    <option value="Gabo">Gabo (Male)</option>
-                    <option value="Gore">Gore (Female)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Marital Status *</label>
-                  <select className="input-field" value={formData.citizen.maritalStatus} onChange={e => updateCitizen('maritalStatus', e.target.value)}>
-                    <option value="Ingaragu">Ingaragu (Single)</option>
-                    <option value="Uubatse">Uubatse (Married)</option>
-                    <option value="Uwamuze">Uwamuze (Widowed)</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
-                  <input type="tel" className="input-field" value={formData.citizen.phone} onChange={e => updateCitizen('phone', e.target.value)} placeholder="078..." />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Submitting</label>
-                  <select className="input-field" value={formData.citizen.reason} onChange={e => updateCitizen('reason', e.target.value)}>
-                    <option value="Self">Ikibazo cyanjye bwite</option>
-                    <option value="Family">Umuryango</option>
-                    <option value="Organization">Ikigo/Itsinda</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 2: Address */}
-        {step === 2 && (
-          <div className="animate-fade-in">
-            <h2 className="text-xl font-semibold mb-4">Your Address (Kamonyi District)</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sector (Umurenge) *</label>
-                <select className="input-field" value={formData.citizen.address.umurenge} onChange={e => updateAddress('umurenge', e.target.value)}>
-                  {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cell (Akagari) *</label>
-                <input type="text" className="input-field" value={formData.citizen.address.akagari} onChange={e => updateAddress('akagari', e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Village (Umudugudu) *</label>
-                <input type="text" className="input-field" value={formData.citizen.address.umudugudu} onChange={e => updateAddress('umudugudu', e.target.value)} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: Complaint */}
-        {step === 3 && (
-          <div className="animate-fade-in">
-            <h2 className="text-xl font-semibold mb-4">Complaint Details</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-                <select className="input-field" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                  <option value="Land/Property">Land / Property</option>
-                  <option value="Administration">Local Administration</option>
-                  <option value="Security">Security</option>
-                  <option value="SocialServices">Social Services</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="p-4 bg-red-50 border border-red-100 rounded-xl mb-4">
-                <h3 className="text-sm font-bold text-red-800 mb-2">Complaint Against:</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Name/Institution</label>
-                    <input type="text" className="input-field py-2" value={formData.against.name} onChange={e => setFormData({...formData, against: {...formData.against, name: e.target.value}})} />
+        <div className="card-premium overflow-hidden border-none shadow-2xl">
+          {/* Progress Header */}
+          <div className="px-8 py-6 bg-slate-900 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              {stepIcons.map((icon, i) => (
+                <React.Fragment key={i}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                    step > i + 1 ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 
+                    step === i + 1 ? 'bg-kamonyiBlue text-white shadow-lg shadow-blue-500/20' : 
+                    'bg-white/10 text-white/30 border border-white/5'
+                  }`}>
+                    {step > i + 1 ? <CheckCircle className="w-4 h-4" /> : icon}
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Contact (Optional)</label>
-                    <input type="text" className="input-field py-2" value={formData.against.contact} onChange={e => setFormData({...formData, against: {...formData.against, contact: e.target.value}})} />
+                  {i < 4 && <div className={`w-4 md:w-8 h-[1px] ${step > i + 1 ? 'bg-green-500' : 'bg-white/10'}`} />}
+                </React.Fragment>
+              ))}
+            </div>
+            <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Phase {step}/5</span>
+          </div>
+
+          <div className="p-8 md:p-12">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="min-h-[350px]"
+              >
+                {/* Steps Content - Redesigned inputs for Premium feel */}
+                {step === 1 && (
+                  <div className="space-y-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-6 bg-kamonyiBlue rounded-full" />
+                      <h2 className="text-xl font-outfit font-black text-slate-800 tracking-tight">Citizen Identity</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="md:col-span-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Legal Full Name</label>
+                        <input type="text" className="input-field" value={formData.citizen.name} onChange={e => updateCitizen('name', e.target.value)} placeholder="Amazina yombi nk'uko ari ku ndangamuntu" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Gender</label>
+                        <select className="input-field appearance-none" value={formData.citizen.gender} onChange={e => updateCitizen('gender', e.target.value)}>
+                          <option value="Gabo">Gabo (Male)</option>
+                          <option value="Gore">Gore (Female)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Active Phone</label>
+                        <input type="tel" className="input-field" value={formData.citizen.phone} onChange={e => updateCitizen('phone', e.target.value)} placeholder="078..." />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description of the issue (Ibisobanuro) *</label>
-                <textarea rows="4" className="input-field resize-none" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Vuga muri make ikibazo cyawe..."></textarea>
-              </div>
-            </div>
+                )}
+
+                {/* STEP 2 */}
+                {step === 2 && (
+                  <div className="space-y-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                      <h2 className="text-xl font-outfit font-black text-slate-800 tracking-tight">Origin Address</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="md:col-span-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Sector (Umurenge)</label>
+                        <select className="input-field appearance-none" value={formData.citizen.address.umurenge} onChange={e => updateAddress('umurenge', e.target.value)}>
+                          {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Cell (Akagari)</label>
+                        <input type="text" className="input-field" value={formData.citizen.address.akagari} onChange={e => updateAddress('akagari', e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Village (Umudugudu)</label>
+                        <input type="text" className="input-field" value={formData.citizen.address.umudugudu} onChange={e => updateAddress('umudugudu', e.target.value)} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 3 */}
+                {step === 3 && (
+                  <div className="space-y-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+                      <h2 className="text-xl font-outfit font-black text-slate-800 tracking-tight">Case Specification</h2>
+                    </div>
+                    <div className="space-y-8">
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Legal Category</label>
+                        <select className="input-field appearance-none" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+                          <option value="Land/Property">Land / Property</option>
+                          <option value="Administration">Local Administration</option>
+                          <option value="Security">Security</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Detailed Narrative</label>
+                        <textarea rows="6" className="input-field resize-none leading-relaxed" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Vuga muri make ikibazo cyawe mu buryo bwumvikana..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 4 */}
+                {step === 4 && (
+                  <div className="space-y-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-6 bg-slate-800 rounded-full" />
+                      <h2 className="text-xl font-outfit font-black text-slate-800 tracking-tight">Previous Recourse</h2>
+                    </div>
+                    <div className="space-y-8">
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Institutions Engaged</label>
+                        <input type="text" className="input-field" value={formData.previousActions.institutions} onChange={e => setFormData({...formData, previousActions: {...formData.previousActions, institutions: e.target.value}})} placeholder="e.g. RIB, Police, Local Council..." />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Action Summary</label>
+                        <textarea rows="5" className="input-field resize-none leading-relaxed" value={formData.previousActions.whatTheyDid} onChange={e => setFormData({...formData, previousActions: {...formData.previousActions, whatTheyDid: e.target.value}})} placeholder="What was the result of your previous report?"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 5 */}
+                {step === 5 && (
+                  <div className="space-y-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-6 bg-green-500 rounded-full" />
+                      <h2 className="text-xl font-outfit font-black text-slate-800 tracking-tight">Final Submission</h2>
+                    </div>
+                    <div className="relative group">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-indigo-50 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="relative border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-[2rem] p-12 text-center hover:border-kamonyiBlue hover:bg-white transition-all cursor-pointer">
+                        <input type="file" multiple className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={handleFileChange} />
+                        <UploadCloud className="w-10 h-10 text-kamonyiBlue mx-auto mb-4" />
+                        <h3 className="text-sm font-black text-slate-800 mb-2 uppercase tracking-widest">Evidence Upload</h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">PDF, PNG, JPG (MAX 5MB per file)</p>
+                      </div>
+                    </div>
+                    {attachments.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {attachments.map((file, i) => (
+                          <div key={i} className="bg-white px-4 py-2 rounded-xl text-[10px] font-black text-slate-600 border border-slate-100 shadow-sm flex items-center space-x-2">
+                            <Paperclip className="w-3 h-3 text-kamonyiBlue" />
+                            <span>{file.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        )}
 
-        {/* STEP 4: Previous Actions */}
-        {step === 4 && (
-          <div className="animate-fade-in">
-            <h2 className="text-xl font-semibold mb-4">Previous Actions</h2>
-            <p className="text-sm text-gray-500 mb-4">Have you reported this issue elsewhere before?</p>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Institutions Contacted (e.g. Umudugudu leader, Police)</label>
-                <input type="text" className="input-field" value={formData.previousActions.institutions} onChange={e => setFormData({...formData, previousActions: {...formData.previousActions, institutions: e.target.value}})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">What action was taken?</label>
-                <textarea rows="3" className="input-field resize-none" value={formData.previousActions.whatTheyDid} onChange={e => setFormData({...formData, previousActions: {...formData.previousActions, whatTheyDid: e.target.value}})}></textarea>
-              </div>
-            </div>
-          </div>
-        )}
+          {/* Controls Footer */}
+          <div className="px-10 py-8 bg-slate-50 flex justify-between items-center border-t border-slate-100">
+            <button onClick={handlePrev} disabled={step === 1} className={`flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest transition-all ${step === 1 ? 'text-slate-300' : 'text-slate-500 hover:text-kamonyiBlue'}`}>
+              <ChevronLeft className="w-4 h-4" /> <span>Previous</span>
+            </button>
 
-        {/* STEP 5: Attachments & Submit */}
-        {step === 5 && (
-          <div className="animate-fade-in">
-            <h2 className="text-xl font-semibold mb-4">Attachments & Review</h2>
-            
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-kamonyiBlue transition-colors mb-6 cursor-pointer relative">
-              <input type="file" multiple className="absolute top-0 right-0 w-full h-full opacity-0 cursor-pointer" onChange={handleFileChange} />
-              <FiUploadCloud className="w-12 h-12 text-kamonyiBlue mx-auto mb-2" />
-              <h3 className="font-semibold text-gray-800">Drag & Drop or Click to Upload</h3>
-              <p className="text-sm text-gray-500 mt-1">PDF, Images (Max 5MB)</p>
-            </div>
-
-            {attachments.length > 0 && (
-              <div className="bg-gray-50 p-4 rounded-xl mb-6">
-                <h4 className="text-sm font-semibold mb-2">Attached Files:</h4>
-                <ul className="text-sm text-gray-600 list-disc pl-5">
-                  {attachments.map((file, i) => <li key={i}>{file.name}</li>)}
-                </ul>
-              </div>
+            {step < 5 ? (
+              <button onClick={handleNext} className="bg-kamonyiBlue text-white px-10 py-4 rounded-xl font-black text-xs shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition-all flex items-center space-x-2">
+                <span>Continue</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <button onClick={submitComplaint} disabled={loading} className="bg-kamonyiBlue text-white px-12 py-4 rounded-xl font-black text-xs shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all flex items-center space-x-2 disabled:opacity-50">
+                {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><span>Transmit Complaint</span><Send className="w-4 h-4" /></>}
+              </button>
             )}
-
-            <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
-              <h3 className="font-semibold text-kamonyiBlue mb-2">Summary</h3>
-              <p className="text-sm text-gray-700"><strong>Name:</strong> {formData.citizen.name || 'Not provided'}</p>
-              <p className="text-sm text-gray-700"><strong>Category:</strong> {formData.category}</p>
-              <p className="text-sm text-gray-700"><strong>Sector:</strong> {formData.citizen.address.umurenge}</p>
-            </div>
           </div>
-        )}
-      </div>
-
-      <div className="mt-8 flex justify-between border-t pt-6">
-        <button 
-          onClick={handlePrev} 
-          disabled={step === 1} 
-          className={`btn-secondary flex items-center space-x-2 ${step === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          <FiArrowLeft /> <span>Back</span>
-        </button>
-
-        {step < 5 ? (
-          <button onClick={handleNext} className="btn-primary flex items-center space-x-2">
-            <span>Next</span> <FiArrowRight />
-          </button>
-        ) : (
-          <button onClick={submitComplaint} disabled={loading} className="btn-primary bg-green-600 hover:bg-green-700 shadow-md hover:shadow-green-500/20 px-8 text-lg flex items-center space-x-2">
-            {loading ? <span>Loading...</span> : <span>Submit Complaint</span>}
-          </button>
-        )}
+        </div>
       </div>
     </div>
   );

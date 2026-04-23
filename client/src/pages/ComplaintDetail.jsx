@@ -1,7 +1,22 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FiArrowLeft, FiUser, FiMapPin, FiFileText, FiClock, FiCheckSquare } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+import { 
+  ArrowLeft, 
+  User, 
+  MapPin, 
+  FileText, 
+  History, 
+  ShieldCheck, 
+  Paperclip, 
+  Send,
+  AlertCircle,
+  Calendar,
+  Activity,
+  Info,
+  ChevronRight
+} from 'lucide-react';
 
 export default function ComplaintDetail() {
   const { id } = useParams();
@@ -24,7 +39,6 @@ export default function ComplaintDetail() {
         setStatus(res.data.status);
         setResponse(res.data.response || '');
       } catch (err) {
-        alert('Error fetching complaint details/Not found');
         navigate('/admin');
       }
     };
@@ -39,158 +53,183 @@ export default function ComplaintDetail() {
         { status, response },
         { headers: { Authorization: `Bearer ${token}` }}
       );
-      alert('Update successful!');
+      setComplaint(prev => ({ ...prev, status, response }));
     } catch (err) {
-      alert('Fail to update');
+      alert('Failed to update.');
     }
     setSaving(false);
   };
 
-  if (!complaint) return <div className="text-center mt-20">Loading...</div>;
+  if (!complaint) return <div className="flex items-center justify-center min-h-screen"><div className="w-6 h-6 border-2 border-kamonyiBlue border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
-      <Link to="/admin" className="inline-flex items-center text-gray-500 hover:text-kamonyiBlue mb-6 group">
-        <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
-      </Link>
+    <div className="min-h-screen pt-24 pb-20 px-6 bg-slate-50/10 font-inter relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-20 -z-10" />
+      
+      <div className="max-w-6xl mx-auto relative z-10">
+        <Link 
+          to="/admin" 
+          className="inline-flex items-center space-x-2 text-slate-400 hover:text-kamonyiBlue font-bold mb-8 transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+          <span className="uppercase tracking-widest text-[9px]">Back to System Dashboard</span>
+        </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Main Detalles */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="card-shadow bg-white rounded-3xl p-8">
-            <div className="flex justify-between items-start mb-6 border-b pb-4">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Complaint ID</p>
-                <h1 className="text-2xl font-mono font-bold text-kamonyiBlue">{complaint.trackingId}</h1>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500 mb-1">Date Submitted</p>
-                <p className="font-semibold text-slate-800">{new Date(complaint.createdAt).toLocaleDateString()}</p>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <h2 className="text-lg font-bold flex items-center mb-3"><FiCheckSquare className="mr-2 text-kamonyiBlue"/> Category</h2>
-              <p className="text-gray-800 bg-gray-50 p-3 rounded-xl border border-gray-100">{complaint.category}</p>
-            </div>
-
-            <div className="mb-6">
-              <h2 className="text-lg font-bold flex items-center mb-3"><FiFileText className="mr-2 text-kamonyiBlue"/> Description</h2>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 whitespace-pre-wrap text-gray-700 leading-relaxed">
-                {complaint.description}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <h2 className="text-lg font-bold text-red-700 mb-3">Complaint Against</h2>
-              <div className="bg-red-50 p-4 rounded-xl border border-red-100 grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-red-500">Name/Institution</p>
-                  <p className="font-semibold text-red-900">{complaint.against?.name}</p>
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
+          {/* Main Case Info */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="bg-white rounded-[2.5rem] shadow-premium border border-slate-100 overflow-hidden relative">
+              <div className="px-10 py-8 border-b border-slate-50 bg-slate-900 flex justify-between items-center">
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/5 shadow-inner">
+                    <ShieldCheck className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-black text-white/40 uppercase tracking-widest">Tracking Reference</div>
+                    <h1 className="text-xl font-outfit font-black text-white">{complaint.trackingId}</h1>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-red-500">Contact</p>
-                  <p className="font-semibold text-red-900">{complaint.against?.contact || 'N/A'}</p>
+                <div className="text-right">
+                  <div className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Submission Date</div>
+                  <div className="text-xs font-bold text-white">{new Date(complaint.createdAt).toLocaleDateString()}</div>
                 </div>
               </div>
-            </div>
 
-            {complaint.previousActions && complaint.previousActions.institutions && (
-              <div className="mb-6">
-                <h2 className="text-lg font-bold flex items-center mb-3"><FiClock className="mr-2 text-kamonyiBlue"/> Previous Actions</h2>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <p className="font-semibold text-gray-800 mb-2">Institutions contacted:</p>
-                  <p className="text-gray-700 mb-4">{complaint.previousActions.institutions}</p>
-                  <p className="font-semibold text-gray-800 mb-2">Result/Action taken:</p>
-                  <p className="text-gray-700">{complaint.previousActions.whatTheyDid}</p>
-                </div>
-              </div>
-            )}
-            
-            {complaint.attachments && complaint.attachments.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold mb-3">Attachments</h2>
-                <div className="flex flex-wrap gap-4">
-                  {complaint.attachments.map((file, i) => (
-                    <a key={i} href={`http://localhost:5000/${file.path}`} target="_blank" rel="noreferrer" className="flex items-center p-3 bg-blue-50 text-blue-700 rounded-xl border border-blue-100 hover:bg-blue-100 transition-colors">
-                      <FiFileText className="mr-2" />
-                      <span className="text-sm font-medium">{file.filename || `Attachment ${i+1}`}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+              <div className="p-10 space-y-12">
+                <section className="space-y-4">
+                  <div className="flex items-center space-x-2 text-[10px] font-black text-kamonyiBlue uppercase tracking-widest">
+                    <div className="w-1.5 h-4 bg-kamonyiBlue rounded-full" />
+                    <span>Case Description</span>
+                  </div>
+                  <div className="bg-slate-50 rounded-2xl p-8 border border-slate-100">
+                    <p className="text-sm text-slate-700 leading-relaxed font-medium">{complaint.description}</p>
+                  </div>
+                </section>
 
-        {/* Sidebar Info & Actions */}
-        <div className="space-y-6">
-          <div className="card-shadow bg-white rounded-3xl p-6">
-            <h2 className="text-lg font-bold flex items-center border-b pb-3 mb-4"><FiUser className="mr-2 text-kamonyiBlue"/> Details: Citizen</h2>
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-semibold">Name</p>
-                <p className="font-medium text-gray-900">{complaint.citizen?.name}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-semibold">Phone / Email</p>
-                <p className="font-medium text-gray-900">{complaint.citizen?.phone} <br/> {complaint.citizen?.email}</p>
-              </div>
-              <div className="grid grid-cols-2">
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold">Gender</p>
-                  <p className="font-medium text-gray-900">{complaint.citizen?.gender}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold">Marital</p>
-                  <p className="font-medium text-gray-900">{complaint.citizen?.maritalStatus}</p>
-                </div>
+                <section className="space-y-4">
+                  <div className="flex items-center space-x-2 text-[10px] font-black text-red-400 uppercase tracking-widest">
+                    <div className="w-1.5 h-4 bg-red-400 rounded-full" />
+                    <span>Reported Entity</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="card-premium !p-6 bg-red-50/30 border-red-100">
+                      <div className="text-[9px] font-black text-red-300 uppercase mb-1">Name/Department</div>
+                      <div className="text-sm font-bold text-red-900">{complaint.against?.name || 'N/A'}</div>
+                    </div>
+                    <div className="card-premium !p-6 bg-red-50/30 border-red-100">
+                      <div className="text-[9px] font-black text-red-300 uppercase mb-1">Contact Reference</div>
+                      <div className="text-sm font-bold text-red-900">{complaint.against?.contact || 'N/A'}</div>
+                    </div>
+                  </div>
+                </section>
+
+                {complaint.attachments?.length > 0 && (
+                  <section className="space-y-4">
+                    <div className="flex items-center space-x-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      <div className="w-1.5 h-4 bg-slate-400 rounded-full" />
+                      <span>Evidentiary Files</span>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {complaint.attachments.map((file, i) => (
+                        <a key={i} href={`http://localhost:5000/${file.path}`} target="_blank" rel="noreferrer" className="flex items-center space-x-3 p-4 bg-white border border-slate-100 rounded-2xl hover:border-kamonyiBlue hover:shadow-lg transition-all text-xs font-bold text-slate-600 group">
+                          <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-hover:bg-kamonyiBlue group-hover:text-white transition-colors">
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <span>{file.filename || `Evidence ${i+1}`}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </section>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="card-shadow bg-white rounded-3xl p-6">
-            <h2 className="text-lg font-bold flex items-center border-b pb-3 mb-4"><FiMapPin className="mr-2 text-kamonyiBlue"/> Details: Address</h2>
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-semibold">Sector (Umurenge)</p>
-                <p className="font-medium text-gray-900">{complaint.citizen?.address?.umurenge}</p>
+          {/* Sidebar */}
+          <div className="lg:col-span-4 space-y-8">
+            {/* Pinned Card for Citizen Details */}
+            <div className="card-pinned !p-8">
+              <div className="flex items-center space-x-2 text-[9px] font-black text-slate-300 uppercase tracking-widest mb-6 border-b border-slate-50 pb-4">
+                <User className="w-3 h-3 text-kamonyiBlue" />
+                <span>Complainant Identity</span>
               </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-semibold">Cell (Akagari)</p>
-                <p className="font-medium text-gray-900">{complaint.citizen?.address?.akagari}</p>
+              <div className="space-y-6">
+                <div>
+                  <div className="text-[8px] font-black text-slate-300 uppercase mb-1">Full Legal Name</div>
+                  <div className="text-base font-outfit font-black text-slate-900">{complaint.citizen?.name}</div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-[8px] font-black text-slate-300 uppercase mb-1">Location</div>
+                    <div className="text-xs font-bold text-slate-700">{complaint.citizen?.address?.umurenge}</div>
+                  </div>
+                  <div>
+                    <div className="text-[8px] font-black text-slate-300 uppercase mb-1">Contact</div>
+                    <div className="text-xs font-bold text-slate-700">{complaint.citizen?.phone}</div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-semibold">Village (Umudugudu)</p>
-                <p className="font-medium text-gray-900">{complaint.citizen?.address?.umudugudu}</p>
+            </div>
+
+            {/* Dark Glow Card for Official Action */}
+            <div className="card-dark-glow !p-8 min-h-[400px] flex flex-col shadow-2xl shadow-blue-900/20">
+              <div className="relative z-10 flex items-center space-x-2 text-[10px] font-black text-blue-400 uppercase tracking-widest mb-8">
+                <Activity className="w-4 h-4" />
+                <span>Executive Resolution</span>
+              </div>
+              
+              <div className="relative z-10 space-y-6 flex-grow">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-white/30 uppercase ml-1">Update Case Status</label>
+                  <select 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white font-bold outline-none focus:ring-2 focus:ring-blue-500/30 transition-all" 
+                    value={status} 
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option value="Pending" className="text-slate-900">Pending Review</option>
+                    <option value="In Progress" className="text-slate-900">Actively Processing</option>
+                    <option value="Resolved" className="text-slate-900">Mark as Resolved</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2 flex-grow">
+                  <label className="text-[9px] font-black text-white/30 uppercase ml-1">Official Findings/Response</label>
+                  <textarea 
+                    rows="6" 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-xs text-white placeholder:text-white/20 outline-none resize-none font-medium leading-relaxed focus:ring-2 focus:ring-blue-500/30 transition-all" 
+                    placeholder="Type official findings or resolution details..." 
+                    value={response} 
+                    onChange={(e) => setResponse(e.target.value)}
+                  />
+                </div>
+
+                <button 
+                  onClick={handleUpdate} 
+                  disabled={saving} 
+                  className="w-full bg-kamonyiBlue text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center space-x-2"
+                >
+                  {saving ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>Submit Resolution</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+                
+                <div className="flex items-center justify-center space-x-2 text-[9px] text-white/20 font-bold uppercase py-2">
+                  <Info className="w-3 h-3" />
+                  <span>Visible to Complainant</span>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="card-shadow bg-blue-50 border border-blue-100 rounded-3xl p-6">
-            <h2 className="text-lg font-bold text-kamonyiBlue border-b border-blue-200 pb-3 mb-4">Official Action</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Update Status</label>
-                <select className="input-field bg-white" value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Resolved">Resolved</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Official Response</label>
-                <textarea rows="4" className="input-field bg-white resize-y" placeholder="Type official response/resolution..." value={response} onChange={(e) => setResponse(e.target.value)}></textarea>
-                <p className="text-xs text-gray-500 mt-2">This response will be visible to the citizen tracking this ID.</p>
-              </div>
-              <button onClick={handleUpdate} disabled={saving} className="btn-primary w-full shadow-sm hover:shadow-md">
-                {saving ? 'Saving...' : 'Save Updates'}
-              </button>
-            </div>
-          </div>
-
-        </div>
+        </motion.div>
       </div>
     </div>
   );

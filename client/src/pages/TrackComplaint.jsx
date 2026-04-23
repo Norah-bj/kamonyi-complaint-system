@@ -1,117 +1,166 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { FiSearch, FiCheck, FiClock, FiActivity } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Search, 
+  Clock, 
+  CheckCircle2, 
+  AlertCircle, 
+  ShieldCheck, 
+  Calendar,
+  Tag,
+  Activity,
+  ArrowUpRight
+} from 'lucide-react';
 
 export default function TrackComplaint() {
   const [trackingId, setTrackingId] = useState('');
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState('');
+  const [complaint, setComplaint] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleTrack = async (e) => {
     e.preventDefault();
     if (!trackingId) return;
-    
     setLoading(true);
     setError('');
-    setResult(null);
-
+    setComplaint(null);
     try {
       const res = await axios.get(`/api/complaints/track/${trackingId}`);
-      setResult(res.data);
+      setComplaint(res.data);
     } catch (err) {
-      setError('Complaint not found. Please check your tracking ID.');
+      setError('No complaint found with this tracking ID.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const getStatusColor = (status) => {
-    if (status === 'Resolved') return 'bg-green-100 text-green-700 border-green-200';
-    if (status === 'In Progress') return 'bg-blue-100 text-blue-700 border-blue-200';
-    return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+    switch(status) {
+      case 'Pending': return 'text-orange-500 bg-orange-50 border-orange-100';
+      case 'In Progress': return 'text-blue-500 bg-blue-50 border-blue-100';
+      case 'Resolved': return 'text-green-500 bg-green-50 border-green-100';
+      default: return 'text-slate-500 bg-slate-50 border-slate-100';
+    }
   };
 
-  const statusIndex = result ? ['Pending', 'In Progress', 'Resolved'].indexOf(result.status) : 0;
-
   return (
-    <div className="max-w-2xl mx-auto mt-20 px-4">
-      <div className="card-shadow bg-white rounded-3xl p-8 mb-8">
-        <div className="text-center mb-8">
-          <div className="inline-block p-4 bg-blue-50 rounded-full mb-4">
-            <FiSearch className="w-8 h-8 text-kamonyiBlue" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">Track Complaint Status</h1>
-          <p className="text-slate-500">Enter your Kamonyi tracking ID to see real-time updates.</p>
+    <div className="min-h-screen pt-32 pb-20 px-6 bg-white overflow-hidden relative">
+      {/* Background Decor */}
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-blue-50 rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-indigo-50 rounded-full blur-[100px] -z-10" />
+
+      <div className="max-w-2xl mx-auto relative z-10">
+        <div className="text-center mb-10">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm"
+          >
+            <ShieldCheck className="w-6 h-6 text-kamonyiBlue" />
+          </motion.div>
+          <h1 className="text-3xl font-outfit font-black text-slate-900 mb-2 tracking-tight">Track Case Status</h1>
+          <p className="text-xs text-slate-500 font-bold uppercase tracking-[0.2em]">Secure District Database</p>
         </div>
 
-        <form onSubmit={handleTrack} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-          <input 
-            type="text" 
-            placeholder="KAM-2026-0001" 
-            className="input-field flex-grow text-center sm:text-left font-mono font-bold text-lg tracking-wider uppercase"
-            value={trackingId}
-            onChange={(e) => setTrackingId(e.target.value.toUpperCase())}
-          />
-          <button type="submit" disabled={loading} className="btn-primary flex items-center justify-center min-w-[140px]">
-            {loading ? 'Searching...' : 'Track'}
+        <motion.form 
+          onSubmit={handleTrack}
+          className="bg-slate-50/50 backdrop-blur-md p-2 rounded-[1.5rem] border border-slate-100 flex items-center space-x-2 mb-12 shadow-inner"
+        >
+          <div className="flex-grow relative group">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-kamonyiBlue transition-colors" />
+            <input 
+              type="text" 
+              className="w-full bg-transparent border-none pl-12 pr-4 py-4 text-sm font-bold text-slate-700 outline-none placeholder:text-slate-300"
+              placeholder="Enter Reference ID (e.g. KAM-XXXX)"
+              value={trackingId}
+              onChange={(e) => setTrackingId(e.target.value)}
+            />
+          </div>
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="bg-kamonyiBlue text-white px-8 py-4 rounded-2xl font-black text-xs shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition-all flex items-center space-x-2 disabled:opacity-50"
+          >
+            {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span>Search Case</span>}
           </button>
-        </form>
-        {error && <p className="text-red-500 text-center mt-4 bg-red-50 py-2 rounded-lg">{error}</p>}
-      </div>
+        </motion.form>
 
-      {result && (
-        <div className="card-shadow bg-white rounded-3xl p-8 animate-fade-in shadow-xl shadow-blue-900/5">
-          <div className="flex justify-between items-start mb-8 pb-6 border-b border-gray-100">
-            <div>
-              <p className="text-sm text-gray-500 mb-1">Tracking ID</p>
-              <h2 className="text-2xl font-mono font-bold text-kamonyiBlue">{result.trackingId}</h2>
-            </div>
-            <div className={`px-4 py-2 rounded-full border font-semibold text-sm ${getStatusColor(result.status)}`}>
-              {result.status}
-            </div>
-          </div>
-          
-          <div className="mb-10">
-            <h3 className="font-semibold text-gray-800 mb-6">Status Timeline</h3>
-            <div className="relative border-l-2 border-gray-100 ml-3 md:ml-4 space-y-8">
-              
-              <div className="relative pl-8">
-                <div className={`absolute -left-[11px] p-1 rounded-full ${statusIndex >= 0 ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
-                  <FiCheck className="w-3 h-3" />
-                </div>
-                <h4 className={`font-medium ${statusIndex >= 0 ? 'text-gray-900' : 'text-gray-400'}`}>Submitted</h4>
-                <p className="text-sm text-gray-500">{new Date(result.createdAt).toLocaleDateString()} - Kamonyi System</p>
-              </div>
-
-              <div className="relative pl-8">
-                <div className={`absolute -left-[11px] p-1 rounded-full ${statusIndex >= 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
-                  <FiActivity className="w-3 h-3" />
-                </div>
-                <h4 className={`font-medium ${statusIndex >= 1 ? 'text-gray-900' : 'text-gray-400'}`}>Under Review</h4>
-                {statusIndex >= 1 && <p className="text-sm text-gray-500">Being reviewed by Sector Officials</p>}
-              </div>
-
-              <div className="relative pl-8">
-                <div className={`absolute -left-[11px] p-1 rounded-full ${statusIndex >= 2 ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-400'}`}>
-                  <FiCheck className="w-3 h-3" />
-                </div>
-                <h4 className={`font-medium ${statusIndex >= 2 ? 'text-gray-900' : 'text-gray-400'}`}>Resolved</h4>
-              </div>
-
-            </div>
-          </div>
-
-          {result.response && (
-            <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 relative">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <FiClock className="w-16 h-16 text-kamonyiBlue" />
-              </div>
-              <h3 className="font-bold text-kamonyiBlue mb-2">Official Response:</h3>
-              <p className="text-gray-700 leading-relaxed relative z-10 whitespace-pre-line">{result.response}</p>
-            </div>
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="bg-red-50 text-red-500 p-4 rounded-xl text-center text-xs font-bold border border-red-100 mb-6 flex items-center justify-center space-x-2"
+            >
+              <AlertCircle className="w-4 h-4" />
+              <span>{error}</span>
+            </motion.div>
           )}
-        </div>
-      )}
+
+          {complaint && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              {/* Cool Result Card - Inspired by Neumorphic/Premium Style */}
+              <div className="card-premium p-8">
+                <div className="flex justify-between items-start mb-8">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest block">Reference ID</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-outfit font-black text-slate-900 tracking-tight">{complaint.trackingId}</span>
+                      <ArrowUpRight className="w-4 h-4 text-slate-300" />
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusColor(complaint.status)}`}>
+                    <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                    <span>{complaint.status}</span>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 border-t border-slate-50 pt-8">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-0.5">Logged On</div>
+                      <div className="text-xs font-bold text-slate-700">{new Date(complaint.createdAt).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center">
+                      <Tag className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-0.5">Category</div>
+                      <div className="text-xs font-bold text-slate-700">{complaint.category}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Response Card - Inspired by Dark Glow/Glass Style */}
+              <div className="relative group p-[1px] rounded-[2.5rem] bg-gradient-to-br from-kamonyiBlue/20 to-indigo-500/20 overflow-hidden">
+                <div className="card-dark-glow min-h-[160px] !p-8">
+                  <div className="relative z-10">
+                    <div className="flex items-center space-x-2 text-[10px] font-black text-blue-400 uppercase tracking-widest mb-4">
+                      <Activity className="w-4 h-4" />
+                      <span>Official Resolution</span>
+                    </div>
+                    <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                      {complaint.response || "Your case is currently undergoing administrative review at the District level. Detailed feedback will appear here shortly."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
