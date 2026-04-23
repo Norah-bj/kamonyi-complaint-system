@@ -188,46 +188,47 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative grid grid-cols-2 gap-4">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-10">
             <motion.div 
-              initial={{ rotate: -5 }}
-              whileHover={{ rotate: 0, scale: 1.05 }}
-              className="card-pinned mt-12"
+              initial={{ rotate: -2 }}
+              whileHover={{ rotate: 0, scale: 1.02 }}
+              className="card-pinned"
             >
               <div className="text-[10px] font-black text-kamonyiBlue uppercase mb-2">Local Gov</div>
               <div className="text-lg font-outfit font-black text-slate-800 mb-2">Umurenge</div>
-              <p className="text-[10px] text-slate-400 font-medium">Direct connection to sector administration.</p>
+              <p className="text-[10px] text-slate-400 font-medium leading-relaxed">Direct connection to sector administration for faster local resolution.</p>
             </motion.div>
             
             <motion.div 
-              initial={{ rotate: 3 }}
-              whileHover={{ rotate: 0, scale: 1.05 }}
+              initial={{ rotate: 2 }}
+              whileHover={{ rotate: 0, scale: 1.02 }}
               className="card-pinned"
             >
               <div className="text-[10px] font-black text-indigo-500 uppercase mb-2">Resolution</div>
               <div className="text-lg font-outfit font-black text-slate-800 mb-2">Direct Feedback</div>
-              <p className="text-[10px] text-slate-400 font-medium">Talk directly to the officials handling your case.</p>
+              <p className="text-[10px] text-slate-400 font-medium leading-relaxed">Talk directly to the officials handling your case in real-time.</p>
             </motion.div>
 
             <motion.div 
-              initial={{ rotate: -2 }}
-              whileHover={{ rotate: 0, scale: 1.05 }}
-              className="card-pinned md:-mt-8"
+              initial={{ rotate: -1 }}
+              whileHover={{ rotate: 0, scale: 1.02 }}
+              className="card-pinned"
             >
               <Database className="w-6 h-6 text-slate-300 mb-4" />
               <div className="text-lg font-outfit font-black text-slate-800 mb-2">Secure Logs</div>
-              <p className="text-[10px] text-slate-400 font-medium">Audit trails for every administrative action.</p>
+              <p className="text-[10px] text-slate-400 font-medium leading-relaxed">Full audit trails for every administrative action taken on your file.</p>
             </motion.div>
 
             <motion.div 
-              initial={{ rotate: 6 }}
-              whileHover={{ rotate: 0, scale: 1.05 }}
-              className="card-pinned mt-4"
+              initial={{ rotate: 1 }}
+              whileHover={{ rotate: 0, scale: 1.02 }}
+              className="card-pinned"
             >
               <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center mb-4">
                 <ArrowRight className="w-5 h-5 text-white" />
               </div>
-              <div className="text-lg font-outfit font-black text-slate-800">Fast Track</div>
+              <div className="text-lg font-outfit font-black text-slate-800 mb-1">Fast Track</div>
+              <p className="text-[10px] text-slate-400 font-medium">Accelerated processing for urgent public matters.</p>
             </motion.div>
           </div>
         </div>
